@@ -93,11 +93,10 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { name, description, checklist } = req.body || {};
     if (!name) return res.status(400).json({ code: 'bad_request', message: 'Name requis' });
-    // optional: verify checklist exists
-    if (checklist) {
-      const c = await Checklist.findById(checklist);
-      if (!c) return res.status(400).json({ code: 'bad_request', message: 'Checklist introuvable' });
-    }
+    if (!checklist) return res.status(400).json({ code: 'bad_request', message: 'Checklist est obligatoire' });
+    // Verify checklist exists
+    const c = await Checklist.findById(checklist);
+    if (!c) return res.status(400).json({ code: 'bad_request', message: 'Checklist introuvable' });
     const created = await Room.create({ name, description, checklist });
     res.status(201).json(created);
   } catch (e) {

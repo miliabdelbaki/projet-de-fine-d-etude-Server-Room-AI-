@@ -141,13 +141,18 @@ router.put("/:verificationId/items/:itemIndex", requireAuth, async (req, res) =>
     const { completed, photo, notes, comment } = req.body || {};
     const userId = (req.user?.uid || req.user?.id || req.user?._id)?.toString();
 
+    console.log(`>>> UPDATE ITEM [${itemIndex}] — verif: ${verificationId} — user: ${userId}`);
+    console.log(`>>> UPDATE ITEM — completed: ${completed}, hasPhoto: ${!!photo}, photoLen: ${photo?.length || 0}`);
+
     const verification = await Verification.findById(verificationId);
 
     if (!verification) {
+      console.log(">>> UPDATE ITEM: vérification introuvable");
       return res.status(404).json({ code: "not_found" });
     }
 
     if (verification.technician.toString() !== userId) {
+      console.log(">>> UPDATE ITEM: accès interdit");
       return res.status(403).json({ code: "forbidden" });
     }
 
@@ -155,23 +160,37 @@ router.put("/:verificationId/items/:itemIndex", requireAuth, async (req, res) =>
       return res.status(400).json({ code: "bad_request", message: "Vérification déjà soumise" });
     }
 
-    const item = verification.items[Number(itemIndex)];
+    const idx = Number(itemIndex);
+    const item = verification.items[idx];
     if (!item) {
+      console.log(`>>> UPDATE ITEM: item ${idx} introuvable (total: ${verification.items.length})`);
       return res.status(404).json({ code: "not_found", message: "Item introuvable" });
     }
 
     item.completed = completed ?? false;
-    if (photo !== undefined) item.photo = photo;
+
+    if (photo !== undefined && photo !== null) {
+      // Normalisation: stocker uniquement le base64 brut (sans préfixe data:URL)
+      const cleanPhoto = photo.replace(/^data:[^;]+;base64,/, '');
+      item.photo = cleanPhoto;
+      console.log(`>>> UPDATE ITEM: photo sauvegardée — ${cleanPhoto.length} chars`);
+    }
+
     if (notes !== undefined) item.notes = notes;
     if (comment !== undefined) item.comment = comment;
     if (item.completed) item.completedAt = new Date();
 
+    // ✅ CRITICAL FIX: forcer Mongoose à détecter les changements du sous-document
+    verification.markModified('items');
+
     await verification.save();
+    console.log(`>>> UPDATE ITEM: sauvegardé avec succès`);
+
     res.json(verification.toObject());
 
   } catch (e) {
-    console.error("verification:update-item", e);
-    res.status(500).json({ code: "server_error", message: "Erreur serveur" });
+    console.error("verification:update-item ERROR:", e.message);
+    res.status(500).json({ code: "server_error", message: e.message });
   }
 });
 

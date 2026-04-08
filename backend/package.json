@@ -6,7 +6,10 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test:ai-key": "node scripts/test-ai-key.js",
+    "test:ai-room-risk": "node scripts/test-ai-room-risk.js",
+    "check:ai-env": "node scripts/check-ai-env.js"
   },
   "engines": {
     "node": ">=18"
@@ -18,7 +21,9 @@
     "express": "^4.19.2",
     "express-rate-limit": "^7.1.5",
     "jsonwebtoken": "^9.0.2",
+    "ml-bayes": "^1.0.5",
     "mongoose": "^8.7.0",
+    "natural": "^8.1.1",
     "nodemailer": "^6.9.14"
   },
   "devDependencies": {
