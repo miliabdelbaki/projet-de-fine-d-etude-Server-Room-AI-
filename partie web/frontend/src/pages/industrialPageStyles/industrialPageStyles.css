@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap');
+
+  .ind-page { font-family: 'Barlow', sans-serif; color: #c8d8e8; }
+
+  .ind-page-header {
+    display: flex; align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #161c26;
+    position: relative;
+  }
+  .ind-page-header::after {
+    content: ''; position: absolute; bottom: -1px; left: 0;
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, #ff6f00, transparent);
+  }
+  .ind-page-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px; font-weight: 800; text-transform: uppercase;
+    color: #fff; letter-spacing: 0.02em; line-height: 1;
+  }
+  .ind-page-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; color: #3a4a5a; text-transform: uppercase;
+    letter-spacing: 0.15em; margin-top: 4px;
+  }
+  .ind-header-actions { display: flex; gap: 8px; align-items: center; }
+
+  .ind-mono { font-family: 'Share Tech Mono', monospace; }
+  .ind-empty-row td {
+    padding: 32px 0 !important;
+    font-family: 'Share Tech Mono', monospace !important;
+    font-size: 11px !important; text-transform: uppercase !important;
+    letter-spacing: 0.12em !important; color: #2a3a4a !important;
+    text-align: center !important;
+  }
+
+  .ind-filter-bar {
+    background: #0d1117; border: 1px solid #161c26;
+    padding: 16px 20px; margin-bottom: 16px;
+    border-left: 3px solid #1e2a38;
+  }
+  .ind-filter-bar:focus-within { border-left-color: #ff6f00; }
+
+  .ind-risk-card {
+    background: #0d1117; border: 1px solid #161c26;
+    padding: 24px; position: relative; overflow: hidden;
+  }
+  .ind-risk-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: var(--card-accent, #ff6f00);
+  }
+  .ind-risk-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; color: #3a4a5a;
+    text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 12px;
+  }
+  .ind-risk-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px; font-weight: 800; line-height: 1;
+    color: var(--card-accent, #ff6f00);
+  }
+  .ind-risk-desc {
+    font-size: 11px; color: #5a6a7a; margin-top: 8px;
+    font-family: 'Share Tech Mono', monospace; line-height: 1.5;
+  }
+
+  .ind-page { width: 100%; max-width: 100%; margin: 0 auto; }
+  .ind-page .MuiTableContainer-root { overflow-x: auto; max-width: 100%; }
+  .ind-page .MuiTable-root { min-width: 640px; width: 100%; }
+  .ind-page .MuiTableCell-root { word-break: break-word; }
+
+  @media (max-width: 1024px) {
+    .ind-page { padding: 0 8px; }
+    .ind-page-header { flex-wrap: wrap; gap: 10px; }
+    .ind-page-header > div { width: 100%; }
+    .ind-header-actions { width: 100%; justify-content: flex-start; }
+  }
+
+  @media (max-width: 768px) {
+    .ind-page-title { font-size: 24px; }
+    .ind-page-subtitle { font-size: 9px; }
+    .ind-risk-card { padding: 16px; }
+    .ind-page .MuiTableCell-root { font-size: 11px; padding: 8px 10px !important; }
+    .ind-page .MuiTableHead-root .MuiTableCell-root { font-size: 10px !important; }
+    .ind-page .MuiButton-root { font-size: 11px !important; padding: 6px 12px !important; }
+
+    .ind-page-header { align-items: flex-start; }
+    .ind-page-header > div:first-child { width: 100%; }
+    .ind-header-actions { width: 100%; justify-content: flex-start; gap: 6px; }
+  }

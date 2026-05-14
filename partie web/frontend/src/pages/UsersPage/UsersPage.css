@@ -1,0 +1,66 @@
+.users-page .page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #161c26;
+    position: relative;
+  }
+  .users-page .page-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, #ff6f00, transparent);
+  }
+  .users-page .page-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .users-page .page-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: #3a4a5a;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 4px;
+  }
+  .users-page { width: 100%; max-width: 100%; margin: 0 auto; }
+  .users-page .page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid #161c26; position: relative; }
+  .users-page .page-header::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 80px; height: 2px; background: linear-gradient(90deg, #ff6f00, transparent); }
+  .users-page .page-title { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.02em; line-height: 1; }
+  .users-page .page-subtitle { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: #3a4a5a; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 4px; }
+  .users-page .header-actions { display: flex; gap: 8px; }
+
+  .users-page .email-cell {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #8a9aaa;
+  }
+
+  .users-page .MuiTableContainer-root { overflow-x: auto; }
+  .users-page .MuiTable-root { min-width: 620px; width: 100%; }
+  .users-page .MuiTableCell-root { word-break: break-word; }
+
+  @media (max-width: 1024px) {
+    .users-page { padding: 0 8px; }
+    .users-page .page-header { flex-wrap: wrap; gap: 10px; }
+    .users-page .header-actions { width: 100%; justify-content: flex-start; }
+  }
+  @media (max-width: 768px) {
+    .users-page .page-title { font-size: 24px; }
+    .users-page .page-subtitle { font-size: 9px; }
+    .users-page .MuiTableCell-root { font-size: 11px; padding: 8px 10px !important; }
+    .users-page .MuiTableHead-root .MuiTableCell-root { font-size: 9px !important; }
+  }
+
+  .users-page .pending-row td { background: rgba(255,171,0,0.03) !important; }
+
+  .delete-confirm-text { color: #8a9aaa; font-size: 14px; }
+  .delete-confirm-text strong { color: #c8d8e8; }
