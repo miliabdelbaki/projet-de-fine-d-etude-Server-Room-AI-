@@ -282,333 +282,333 @@ export default function RoomRiskAnalysisPage() {
   return (
     <Box className="ind-page">
 
-        {/* Header */}
-        <div className="ind-page-header">
-          <div>
-            <div className="ind-page-title">Analyse de risque</div>
-           
-          </div>
-          <div className="ind-header-actions ind-select-wrap">
-            <FormControl size="small">
-              <InputLabel>Salle</InputLabel>
-              <Select value={selectedRoomId} label="Salle" onChange={e => setSelectedRoomId(e.target.value)}>
-                {rooms.map(r => <MenuItem key={r._id || r.id} value={r._id || r.id}>{r.name}</MenuItem>)}
-              </Select>
-            </FormControl>
-          </div>
+      {/* Header */}
+      <div className="ind-page-header">
+        <div>
+          <div className="ind-page-title">Analyse de risque</div>
+
         </div>
+        <div className="ind-header-actions ind-select-wrap">
+          <FormControl size="small">
+            <InputLabel>Salle</InputLabel>
+            <Select value={selectedRoomId} label="Salle" onChange={e => setSelectedRoomId(e.target.value)}>
+              {rooms.map(r => <MenuItem key={r._id || r.id} value={r._id || r.id}>{r.name}</MenuItem>)}
+            </Select>
+          </FormControl>
+        </div>
+      </div>
 
-        {/* AI loading */}
-        {aiLoading && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, p: '10px 16px', background: '#0d1a2a', borderRadius: 2, border: '1px solid #1a3a5a' }}>
-            <CircularProgress size={16} sx={{ color: '#4a90e2' }} />
-            <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 12, color: '#4a90e2' }}>Analyse IA en cours…</Typography>
-          </Box>
-        )}
+      {/* AI loading */}
+      {aiLoading && (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, p: '10px 16px', background: '#0d1a2a', borderRadius: 2, border: '1px solid #1a3a5a' }}>
+          <CircularProgress size={16} sx={{ color: '#4a90e2' }} />
+          <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 12, color: '#4a90e2' }}>Analyse IA en cours…</Typography>
+        </Box>
+      )}
 
-        {/* KPI cards */}
-        <Grid container spacing={3} sx={{ mb: 3 }}>
+      {/* KPI cards */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
 
-          {/* Risque actuel */}
-          <Grid item xs={12} sm={6} md={3}>
-            <div className="ind-risk-card" style={{ '--card-accent': riskColor, textAlign: 'center' }}>
-              <div className="ind-risk-label">Risque actuel</div>
-              <RiskGauge value={result.risk} label="État actuel" color={riskColor} />
-              <Chip label={result.state} className={result.state === 'Normal' ? 'rra-badge-normal' : 'rra-badge-anormal'}
-                size="small" sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, mt: 0.5 }} />
-            </div>
-          </Grid>
-
-          {/* Risque prédit */}
-          <Grid item xs={12} sm={6} md={3}>
-            <div className="ind-risk-card" style={{ '--card-accent': predColor, textAlign: 'center' }}>
-              <div className="ind-risk-label">Risque prédit</div>
-              <RiskGauge value={result.predictedRisk ?? result.risk} label="État futur estimé" color={predColor} />
-              <Chip label={trendLabel} className={trendClass}
-                size="small" sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, mt: 0.5 }} />
-            </div>
-          </Grid>
-
-          {/* Commentaires analysés — dynamique */}
-          <Grid item xs={12} sm={6} md={3}>
-            <div className="ind-risk-card" style={{ '--card-accent': result.issues > 0 ? '#e53935' : '#00e676' }}>
-              <div className="ind-risk-label">Commentaires analysés</div>
-              <div className="ind-risk-value" style={{ color: result.issues > 0 ? '#e53935' : '#00e676' }}>
-                {result.issues}
-              </div>
-              <div className="ind-risk-desc">alerte{result.issues !== 1 ? 's' : ''} sur {result.total} commentaire{result.total !== 1 ? 's' : ''}</div>
-              <div className="ind-risk-desc" style={{ marginTop: 8, fontSize: 11 }}>{result.reason}</div>
-              {result.note && (
-                <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 9, color: '#2a5a8a', mt: 1 }}>{result.note}</Typography>
-              )}
-            </div>
-          </Grid>
-
-          {/* Maintenance recommendation */}
-          <Grid item xs={12} sm={6} md={3}>
-            <div className="ind-risk-card" style={{ '--card-accent': '#0096ff' }}>
-              <div className="ind-risk-label">Recommandation maintenance</div>
-              {result.maintenance ? (
-                <>
-                  <div className="ind-risk-value" style={{ color: PRIORITY_COLOR[result.maintenance.priority] || '#0096ff', fontSize: 22 }}>
-                    {result.maintenance.priority}
-                  </div>
-                  <div className="ind-risk-desc">🔧 {result.maintenance.action}</div>
-                  <div className="ind-risk-desc" style={{ marginTop: 4, fontSize: 11 }}>{result.maintenance.details}</div>
-                </>
-              ) : (
-                <div className="ind-risk-desc">Calcul en cours…</div>
-              )}
-            </div>
-          </Grid>
+        {/* Risque actuel */}
+        <Grid item xs={12} sm={6} md={3}>
+          <div className="ind-risk-card" style={{ '--card-accent': riskColor, textAlign: 'center' }}>
+            <div className="ind-risk-label">Risque actuel</div>
+            <RiskGauge value={result.risk} label="État actuel" color={riskColor} />
+            <Chip label={result.state} className={result.state === 'Normal' ? 'rra-badge-normal' : 'rra-badge-anormal'}
+              size="small" sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, mt: 0.5 }} />
+          </div>
         </Grid>
 
-        {/* Alertes IA */}
-        {(result.alerts || []).length > 0 && (
-          <Paper sx={{ mb: 3, background: '#0a0f18', border: '1px solid #2a0a0a' }}>
-            <Box sx={{ p: '10px 16px', borderBottom: '1px solid #1a0a0a', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <div style={{ width: 3, height: 16, background: '#e53935' }} />
-              <Typography sx={{ fontFamily: 'Barlow Condensed', fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#fff' }}>
-                Points critiques détectés
-              </Typography>
-            </Box>
-            <Box sx={{ p: 2 }}>
-              {result.alerts.map((alert, i) => (
-                <div key={i} className="rra-alert-item">
-                  <span style={{ fontSize: 14 }}>⚠️</span>
-                  <span className="rra-alert-text">{alert}</span>
-                </div>
-              ))}
-            </Box>
-          </Paper>
-        )}
+        {/* Risque prédit */}
+        <Grid item xs={12} sm={6} md={3}>
+          <div className="ind-risk-card" style={{ '--card-accent': predColor, textAlign: 'center' }}>
+            <div className="ind-risk-label">Risque prédit</div>
+            <RiskGauge value={result.predictedRisk ?? result.risk} label="État futur estimé" color={predColor} />
+            <Chip label={trendLabel} className={trendClass}
+              size="small" sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, mt: 0.5 }} />
+          </div>
+        </Grid>
 
-        {/* Admin — Décision maintenance */}
-        {isAdmin && (
-          <Paper sx={{ mb: 3, background: '#0a1520', border: '1px solid #1a3a5a' }}>
-            <Box sx={{ p: '10px 16px', borderBottom: '1px solid #1a2a3a', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <div style={{ width: 3, height: 16, background: '#4a90e2' }} />
-              <Typography sx={{ fontFamily: 'Barlow Condensed', fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#fff' }}>
-                Décision de maintenance (Admin)
-              </Typography>
-            </Box>
-            <Box sx={{ p: 2 }}>
-              <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, color: '#5a7a9a', mb: 2 }}>
-                Décision liée à <strong>une vérification</strong> : page <strong>Historique salles</strong>, colonne « Décision maintenance ».
-                Ici : remarque globale pour la salle (sans ligne de vérification).
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-                  <FormControl size="small" sx={{ minWidth: 140 }}>
-                    <InputLabel sx={{ fontSize: 12 }}>Priorité</InputLabel>
-                    <Select value={notePriority} label="Priorité" onChange={e => setNotePriority(e.target.value)}
-                      sx={{ fontSize: 12, background: '#0d1117' }}>
-                      {['Faible', 'Moyenne', 'Haute', 'Critique'].map(p => (
-                        <MenuItem key={p} value={p} sx={{ fontSize: 12 }}>{p}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl size="small" sx={{ minWidth: 210 }}>
-                    <InputLabel sx={{ fontSize: 12 }}>Technicien assigné</InputLabel>
-                    <Select
-                      value={assignedTechnicianId}
-                      label="Technicien assigné"
-                      onChange={e => setAssignedTechnicianId(e.target.value)}
-                      sx={{ fontSize: 12, background: '#0d1117' }}
-                    >
-                      <MenuItem value="" sx={{ fontSize: 12 }}>Aucun</MenuItem>
-                      {technicians.map(t => (
-                        <MenuItem key={t.id} value={t.id} sx={{ fontSize: 12 }}>
-                          {t.displayName || t.email}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 10, color: '#3a5a7a', alignSelf: 'center' }}>
-                    État actuel : {result.state} ({result.risk}%)
-                  </Typography>
-                </Box>
-                <TextField
-                  multiline minRows={2} maxRows={5}
-                  placeholder="Saisir la décision ou remarque de maintenance…"
-                  value={noteText}
-                  onChange={e => setNoteText(e.target.value)}
-                  size="small"
-                  sx={{ '& .MuiInputBase-root': { background: '#0d1117', fontSize: 13 } }}
-                />
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button variant="contained" size="small" onClick={saveNote} disabled={saving || !noteText.trim()}
-                    sx={{ background: '#1a3a6a', '&:hover': { background: '#2a5aaa' }, fontFamily: 'Share Tech Mono', fontSize: 11 }}>
-                    {saving ? 'Enregistrement…' : '💾 Enregistrer la décision'}
-                  </Button>
-                </Box>
-              </Box>
-            </Box>
-          </Paper>
-        )}
-
-        {/* Historique commentaires checklist */}
-        <Paper sx={{ background: '#0d1117', border: '1px solid #1a2233' }}>
-          <Box sx={{ p: '10px 16px', borderBottom: '1px solid #161c26', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 3, height: 16, background: '#ff6f00' }} />
-              <Typography sx={{ fontFamily: 'Barlow Condensed', fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#fff' }}>
-                Commentaires de vérification checklist
-              </Typography>
+        {/* Commentaires analysés — dynamique */}
+        <Grid item xs={12} sm={6} md={3}>
+          <div className="ind-risk-card" style={{ '--card-accent': result.issues > 0 ? '#e53935' : '#00e676' }}>
+            <div className="ind-risk-label">Commentaires analysés</div>
+            <div className="ind-risk-value" style={{ color: result.issues > 0 ? '#e53935' : '#00e676' }}>
+              {result.issues}
             </div>
-            <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, color: '#3a5a7a' }}>
-              {comments.length} commentaire{comments.length !== 1 ? 's' : ''}
+            <div className="ind-risk-desc">alerte{result.issues !== 1 ? 's' : ''} sur {result.total} commentaire{result.total !== 1 ? 's' : ''}</div>
+            <div className="ind-risk-desc" style={{ marginTop: 8, fontSize: 11 }}>{result.reason}</div>
+            {result.note && (
+              <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 9, color: '#2a5a8a', mt: 1 }}>{result.note}</Typography>
+            )}
+          </div>
+        </Grid>
+
+        {/* Maintenance recommendation */}
+        <Grid item xs={12} sm={6} md={3}>
+          <div className="ind-risk-card" style={{ '--card-accent': '#0096ff' }}>
+            <div className="ind-risk-label">Recommandation maintenance</div>
+            {result.maintenance ? (
+              <>
+                <div className="ind-risk-value" style={{ color: PRIORITY_COLOR[result.maintenance.priority] || '#0096ff', fontSize: 22 }}>
+                  {result.maintenance.priority}
+                </div>
+                <div className="ind-risk-desc">🔧 {result.maintenance.action}</div>
+                <div className="ind-risk-desc" style={{ marginTop: 4, fontSize: 11 }}>{result.maintenance.details}</div>
+              </>
+            ) : (
+              <div className="ind-risk-desc">Calcul en cours…</div>
+            )}
+          </div>
+        </Grid>
+      </Grid>
+
+      {/* Alertes IA */}
+      {(result.alerts || []).length > 0 && (
+        <Paper sx={{ mb: 3, background: '#0a0f18', border: '1px solid #2a0a0a' }}>
+          <Box sx={{ p: '10px 16px', borderBottom: '1px solid #1a0a0a', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <div style={{ width: 3, height: 16, background: '#e53935' }} />
+            <Typography sx={{ fontFamily: 'Barlow Condensed', fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#fff' }}>
+              Points critiques détectés
             </Typography>
           </Box>
-          <List sx={{ p: 0, px: 2 }}>
-            {comments.length === 0 ? (
-              <ListItem>
-                <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, color: '#2a3a4a', py: 2 }}>
-                  Aucun commentaire de vérification pour cette salle.
-                </Typography>
-              </ListItem>
-            ) : (
-              [...comments]
-                .sort((a, b) => new Date(b.verif?.createdAt) - new Date(a.verif?.createdAt))
-                .map((c, i) => {
-                  const isAlert = hasIssue(c.text) || !c.completed;
-                  return (
-                    <ListItem 
-                      key={i} 
-                      className={`rra-comment-item rra-comment-item-clickable`}
-                      alignItems="flex-start"
-                      onClick={() => setSelectedComment(c)}
-                      title="Cliquez pour voir la photo"
-                      sx={{ borderLeft: isAlert ? '3px solid #e53935' : '3px solid transparent', pl: 1.5 }}>
-                      <ListItemText
-                        primary={
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <span className="rra-comment-date">{c.date}</span>
-                            {isAlert && <Chip label="Alerte" size="small" sx={{ height: 16, fontSize: 9, background: '#3a0a0a', color: '#ef5350', border: '1px solid #c62828', fontFamily: 'Share Tech Mono' }} />}
-                            {!c.completed && <Chip label="Non complété" size="small" sx={{ height: 16, fontSize: 9, background: '#2a1a00', color: '#ffab00', border: '1px solid #e65100', fontFamily: 'Share Tech Mono' }} />}
-                          </Box>
-                        }
-                        secondary={
-                          <>
-                            <span className="rra-comment-label">{c.label}</span><br />
-                            <span className="rra-comment-text">{c.text}</span><br />
-                            <span className="rra-comment-author">Technicien: {c.tech}</span>
-                          </>
-                        }
-                      />
-                    </ListItem>
-                  );
-                })
-            )}
-          </List>
+          <Box sx={{ p: 2 }}>
+            {result.alerts.map((alert, i) => (
+              <div key={i} className="rra-alert-item">
+                <span style={{ fontSize: 14 }}>⚠️</span>
+                <span className="rra-alert-text">{alert}</span>
+              </div>
+            ))}
+          </Box>
         </Paper>
+      )}
 
-        {/* ✅ MODALE: Détails de commentaire avec images */}
-        {selectedComment && (
-          <div className="rra-modal-overlay" onClick={() => setSelectedComment(null)}>
-            <div className="rra-modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="rra-modal-header">
-                <div className="rra-modal-title">Détails du commentaire</div>
-                <button className="rra-modal-close" onClick={() => setSelectedComment(null)}>✕</button>
-              </div>
+      {/* Admin — Décision maintenance */}
+      {isAdmin && (
+        <Paper sx={{ mb: 3, background: '#0a1520', border: '1px solid #1a3a5a' }}>
+          <Box sx={{ p: '10px 16px', borderBottom: '1px solid #1a2a3a', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <div style={{ width: 3, height: 16, background: '#4a90e2' }} />
+            <Typography sx={{ fontFamily: 'Barlow Condensed', fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#fff' }}>
+              Décision de maintenance (Admin)
+            </Typography>
+          </Box>
+          <Box sx={{ p: 2 }}>
+            <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, color: '#5a7a9a', mb: 2 }}>
+              Décision liée à <strong>une vérification</strong> : page <strong>Historique salles</strong>, colonne « Décision maintenance ».
+              Ici : remarque globale pour la salle (sans ligne de vérification).
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                <FormControl size="small" sx={{ minWidth: 140 }}>
+                  <InputLabel sx={{ fontSize: 12 }}>Priorité</InputLabel>
+                  <Select value={notePriority} label="Priorité" onChange={e => setNotePriority(e.target.value)}
+                    sx={{ fontSize: 12, background: '#0d1117' }}>
+                    {['Faible', 'Moyenne', 'Haute', 'Critique'].map(p => (
+                      <MenuItem key={p} value={p} sx={{ fontSize: 12 }}>{p}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl size="small" sx={{ minWidth: 210 }}>
+                  <InputLabel sx={{ fontSize: 12 }}>Technicien assigné</InputLabel>
+                  <Select
+                    value={assignedTechnicianId}
+                    label="Technicien assigné"
+                    onChange={e => setAssignedTechnicianId(e.target.value)}
+                    sx={{ fontSize: 12, background: '#0d1117' }}
+                  >
+                    <MenuItem value="" sx={{ fontSize: 12 }}>Aucun</MenuItem>
+                    {technicians.map(t => (
+                      <MenuItem key={t.id} value={t.id} sx={{ fontSize: 12 }}>
+                        {t.displayName || t.email}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 10, color: '#3a5a7a', alignSelf: 'center' }}>
+                  État actuel : {result.state} ({result.risk}%)
+                </Typography>
+              </Box>
+              <TextField
+                multiline minRows={2} maxRows={5}
+                placeholder="Saisir la décision ou remarque de maintenance…"
+                value={noteText}
+                onChange={e => setNoteText(e.target.value)}
+                size="small"
+                sx={{ '& .MuiInputBase-root': { background: '#0d1117', fontSize: 13 } }}
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button variant="contained" size="small" onClick={saveNote} disabled={saving || !noteText.trim()}
+                  sx={{ background: '#1a3a6a', '&:hover': { background: '#2a5aaa' }, fontFamily: 'Share Tech Mono', fontSize: 11 }}>
+                  {saving ? 'Enregistrement…' : '💾 Enregistrer la décision'}
+                </Button>
+              </Box>
+            </Box>
+          </Box>
+        </Paper>
+      )}
 
-              <div className="rra-detail-section">
-                <div className="rra-detail-row">
-                  <span className="rra-detail-label">Élément</span>
-                  <span className="rra-detail-value">{selectedComment.label}</span>
-                </div>
-                <div className="rra-detail-row">
-                  <span className="rra-detail-label">Technicien</span>
-                  <span className="rra-detail-value">{selectedComment.tech}</span>
-                </div>
-                <div className="rra-detail-row">
-                  <span className="rra-detail-label">Date</span>
-                  <span className="rra-detail-value">{selectedComment.date}</span>
-                </div>
-                <div className="rra-detail-row">
-                  <span className="rra-detail-label">Statut</span>
-                  <span className="rra-detail-value">
-                    <span style={{ color: selectedComment.completed ? '#00e676' : '#e53935' }}>
-                      {selectedComment.completed ? '✓ COMPLÉTÉ' : '✗ NON COMPLÉTÉ'}
-                    </span>
-                  </span>
-                </div>
-              </div>
-
-              <div style={{
-                background: 'rgba(255, 111, 0, 0.05)',
-                border: '1px solid #1e2a38',
-                padding: '12px',
-                marginBottom: '16px'
-              }}>
-                <div style={{ fontSize: 13, color: '#7a9aba', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  Commentaire
-                </div>
-                <div style={{ fontSize: 15, color: '#e8f1fa', lineHeight: 1.6, wordBreak: 'break-word' }}>
-                  {selectedComment.text}
-                </div>
-              </div>
-
-              {/* Afficher la photo de cet item spécifique */}
-              {selectedComment.verif?.items && selectedComment.verif.items.length > 0 && (
-                <div className="rra-items-container">
-                  <div style={{
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontSize: 16,
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
-                    color: '#ffffff',
-                    marginBottom: 16,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8
-                  }}>
-                    <span style={{ width: 3, height: 18, background: '#ff6f00' }} />
-                    Photo capturée
-                  </div>
-
-                  {selectedComment.verif.items
-                    .filter(item => item.label === selectedComment.label)
-                    .map((item, idx) => {
-                      const photoSrc = getPhotoSrc(item.photo);
-                      if (!photoSrc) {
-                        return (
-                          <div className="rra-item-block" key={idx}>
-                            <div className="rra-no-image">📷 Aucune photo capturée</div>
-                          </div>
-                        );
+      {/* Historique commentaires checklist */}
+      <Paper sx={{ background: '#0d1117', border: '1px solid #1a2233' }}>
+        <Box sx={{ p: '10px 16px', borderBottom: '1px solid #161c26', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 3, height: 16, background: '#ff6f00' }} />
+            <Typography sx={{ fontFamily: 'Barlow Condensed', fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: '#fff' }}>
+              Commentaires de vérification checklist
+            </Typography>
+          </div>
+          <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, color: '#3a5a7a' }}>
+            {comments.length} commentaire{comments.length !== 1 ? 's' : ''}
+          </Typography>
+        </Box>
+        <List sx={{ p: 0, px: 2 }}>
+          {comments.length === 0 ? (
+            <ListItem>
+              <Typography sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, color: '#2a3a4a', py: 2 }}>
+                Aucun commentaire de vérification pour cette salle.
+              </Typography>
+            </ListItem>
+          ) : (
+            [...comments]
+              .sort((a, b) => new Date(b.verif?.createdAt) - new Date(a.verif?.createdAt))
+              .map((c, i) => {
+                const isAlert = hasIssue(c.text) || !c.completed;
+                return (
+                  <ListItem
+                    key={i}
+                    className={`rra-comment-item rra-comment-item-clickable`}
+                    alignItems="flex-start"
+                    onClick={() => setSelectedComment(c)}
+                    title="Cliquez pour voir la photo"
+                    sx={{ borderLeft: isAlert ? '3px solid #e53935' : '3px solid transparent', pl: 1.5 }}>
+                    <ListItemText
+                      primary={
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <span className="rra-comment-date">{c.date}</span>
+                          {isAlert && <Chip label="Alerte" size="small" sx={{ height: 16, fontSize: 9, background: '#3a0a0a', color: '#ef5350', border: '1px solid #c62828', fontFamily: 'Share Tech Mono' }} />}
+                          {!c.completed && <Chip label="Non complété" size="small" sx={{ height: 16, fontSize: 9, background: '#2a1a00', color: '#ffab00', border: '1px solid #e65100', fontFamily: 'Share Tech Mono' }} />}
+                        </Box>
                       }
+                      secondary={
+                        <>
+                          <span className="rra-comment-label">{c.label}</span><br />
+                          <span className="rra-comment-text">{c.text}</span><br />
+                          <span className="rra-comment-author">Technicien: {c.tech}</span>
+                        </>
+                      }
+                    />
+                  </ListItem>
+                );
+              })
+          )}
+        </List>
+      </Paper>
+
+      {/* ✅ MODALE: Détails de commentaire avec images */}
+      {selectedComment && (
+        <div className="rra-modal-overlay" onClick={() => setSelectedComment(null)}>
+          <div className="rra-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="rra-modal-header">
+              <div className="rra-modal-title">Détails du commentaire</div>
+              <button className="rra-modal-close" onClick={() => setSelectedComment(null)}>✕</button>
+            </div>
+
+            <div className="rra-detail-section">
+              <div className="rra-detail-row">
+                <span className="rra-detail-label">Élément</span>
+                <span className="rra-detail-value">{selectedComment.label}</span>
+              </div>
+              <div className="rra-detail-row">
+                <span className="rra-detail-label">Technicien</span>
+                <span className="rra-detail-value">{selectedComment.tech}</span>
+              </div>
+              <div className="rra-detail-row">
+                <span className="rra-detail-label">Date</span>
+                <span className="rra-detail-value">{selectedComment.date}</span>
+              </div>
+              <div className="rra-detail-row">
+                <span className="rra-detail-label">Statut</span>
+                <span className="rra-detail-value">
+                  <span style={{ color: selectedComment.completed ? '#00e676' : '#e53935' }}>
+                    {selectedComment.completed ? '✓ COMPLÉTÉ' : '✗ NON COMPLÉTÉ'}
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <div style={{
+              background: 'rgba(255, 111, 0, 0.05)',
+              border: '1px solid #1e2a38',
+              padding: '12px',
+              marginBottom: '16px'
+            }}>
+              <div style={{ fontSize: 13, color: '#7a9aba', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Commentaire
+              </div>
+              <div style={{ fontSize: 15, color: '#e8f1fa', lineHeight: 1.6, wordBreak: 'break-word' }}>
+                {selectedComment.text}
+              </div>
+            </div>
+
+            {/* Afficher la photo de cet item spécifique */}
+            {selectedComment.verif?.items && selectedComment.verif.items.length > 0 && (
+              <div className="rra-items-container">
+                <div style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: 16,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  color: '#ffffff',
+                  marginBottom: 16,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}>
+                  <span style={{ width: 3, height: 18, background: '#ff6f00' }} />
+                  Photo capturée
+                </div>
+
+                {selectedComment.verif.items
+                  .filter(item => item.label === selectedComment.label)
+                  .map((item, idx) => {
+                    const photoSrc = getPhotoSrc(item.photo);
+                    if (!photoSrc) {
                       return (
                         <div className="rra-item-block" key={idx}>
-                          <img 
-                            src={photoSrc}
-                            alt={`Photo - ${item.label}`}
-                            className="rra-item-image"
-                            onLoad={() => {
-                              console.log('✅ Image loaded successfully for:', item.label);
-                            }}
-                            onError={(e) => {
-                              console.error('❌ Image load error for:', item.label);
-                              console.error('Photo src starts with:', photoSrc?.substring(0, 80));
-                              console.error('Photo length:', photoSrc?.length);
-                              e.target.style.display = 'none';
-                              const errorDiv = document.createElement('div');
-                              errorDiv.className = 'rra-no-image';
-                              errorDiv.textContent = '❌ Erreur lors du chargement de l\'image';
-                              e.target.parentElement.appendChild(errorDiv);
-                            }}
-                          />
+                          <div className="rra-no-image">📷 Aucune photo capturée</div>
                         </div>
                       );
-                    })}
-                </div>
-              )}
-            </div>
+                    }
+                    return (
+                      <div className="rra-item-block" key={idx}>
+                        <img
+                          src={photoSrc}
+                          alt={`Photo - ${item.label}`}
+                          className="rra-item-image"
+                          onLoad={() => {
+                            console.log('✅ Image loaded successfully for:', item.label);
+                          }}
+                          onError={(e) => {
+                            console.error('❌ Image load error for:', item.label);
+                            console.error('Photo src starts with:', photoSrc?.substring(0, 80));
+                            console.error('Photo length:', photoSrc?.length);
+                            e.target.style.display = 'none';
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'rra-no-image';
+                            errorDiv.textContent = '❌ Erreur lors du chargement de l\'image';
+                            e.target.parentElement.appendChild(errorDiv);
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
           </div>
-        )}
-      </Box>
+        </div>
+      )}
+    </Box>
 
   );
-  
+
 }
