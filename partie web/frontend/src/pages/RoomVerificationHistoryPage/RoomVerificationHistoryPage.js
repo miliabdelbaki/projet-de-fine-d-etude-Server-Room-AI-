@@ -178,7 +178,7 @@ export default function RoomVerificationHistoryPage() {
             <TableHead>
               <TableRow>
                 <TableCell>Date</TableCell>
-                <TableCell>Technicien</TableCell>
+                <TableCell>Employé</TableCell>
                 <TableCell>Statut</TableCell>
                 <TableCell>État de la salle (IA)</TableCell>
               </TableRow>
@@ -194,7 +194,7 @@ export default function RoomVerificationHistoryPage() {
                       {vDate.toLocaleDateString('fr-FR')}
                     </TableCell>
                     <TableCell>
-                      {v.technician?.displayName || v.technician?.email || '—'}
+                      {v.employee?.displayName || v.employee?.email || v.technician?.displayName || v.technician?.email || '—'}
                     </TableCell>
                     <TableCell>
                       <Chip label={v.status} size="small"

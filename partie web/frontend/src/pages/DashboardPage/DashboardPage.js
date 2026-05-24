@@ -105,7 +105,7 @@ export default function DashboardPage() {
         <div className="db-header">
           <div>
             <div className="db-title">Tableau de bord</div>
-            <div className="db-subtitle">// Vue d'ensemble opérationnelle</div>
+            
           </div>
           <div className="db-timestamp">
             <div style={{ fontFamily: 'Share Tech Mono', fontSize: 11, color: '#3a4a5a' }}>
@@ -201,8 +201,8 @@ export default function DashboardPage() {
                 <span className="detail-value">{selectedActivity.room}</span>
               </div>
               <div className="detail-row">
-                <span className="detail-label">Technicien</span>
-                <span className="detail-value">{selectedActivity.technician}</span>
+                <span className="detail-label">Employé</span>
+                <span className="detail-value">{selectedActivity.employee || selectedActivity.technician}</span>
               </div>
               <div className="detail-row">
                 <span className="detail-label">Statut</span>

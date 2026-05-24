@@ -9,12 +9,22 @@ import { requireAuth } from '../middleware/auth.js';
 const router = express.Router();
 
 // =========================
-// API Keys — lire depuis les variables d'environnement
-// Dans votre .env : GROQ_API_KEY=...
+// API Keys — lire depuis les variables d'environnement UNIQUEMENT
+// Ne jamais hardcoder une clé dans le code source !
+// Dans votre .env : OPENROUTER_API_KEY=sk-or-v1-...
 // =========================
-const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
-const GROQ_MODEL   = process.env.GROQ_MODEL || 'llama-3.1-8b-instant';
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '';
+const GROQ_API_KEY       = process.env.GROQ_API_KEY || '';
+const OPENROUTER_MODEL   = process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.1-8b-instruct';
+const GROQ_MODEL         = process.env.GROQ_MODEL || 'llama-3.1-8b-instant';
 
+if (!OPENROUTER_API_KEY) {
+  console.warn('[AI]   OPENROUTER_API_KEY non définie dans .env — OpenRouter désactivé.');
+}
+
+// =========================
+// Analyse de texte par liste de mots-cles : SUPPRIMEE volontairement.
+// Le risque doit etre calcule par l IA (via votre cle API), en analysant le commentaire du technicien.
 
 // =========================
 // Extraire tous les commentaires
@@ -145,7 +155,85 @@ function maintenanceDecision(risk, state) {
   return   { priority: 'Faible',   action: 'Maintenance routine',             details: 'Aucune action immediate requise.' };
 }
 
+// =========================
+// IA — OpenRouter (primaire)
+// =========================
+async function analyzeWithOpenRouter(verifications, roomContext) {
+  if (!OPENROUTER_API_KEY) return null;
 
+  const allItems = extractAllComments(verifications);
+  if (!allItems.length) return null;
+
+  const commentLines = allItems
+    .filter(it => it.text && it.text.trim())
+    .map(it => `[${it.date}] "${it.text}"`)
+    .join('\n');
+
+  if (!commentLines) return null;
+
+  const salleNom = roomContext?.name ? String(roomContext.name) : 'Salle (nom inconnu)';
+  const salleDesc = roomContext?.description ? String(roomContext.description) : '';
+  const roomBlock = salleDesc ? `${salleNom}\nDescription: ${salleDesc}` : salleNom;
+
+  const prompt = `Tu es un expert en maintenance de salles serveurs.
+Contexte de la salle (utiliser comme contexte UNIQUEMENT, pas comme commentaire technicien) :
+${roomBlock}
+
+Analyse les commentaires ci-dessous.
+
+REGLES OBLIGATOIRES :
+1. Le score "risk" (0-100) doit refleter la gravite reelle des commentaires.
+2. Seuils d etat : risk < 30 -> "Normal" | 30-49 -> "Attention" | >= 50 -> "Anormal".
+   Un score de 17% doit donner l etat "Normal", PAS "Anormal".
+3. Analyse UNIQUEMENT les commentaires du technicien fournis ci-dessous.
+   Ne traite pas la description de la salle comme un commentaire technicien.
+   N analyse pas les libelles techniques, ni les phrases systeme, ni les regles de code.
+4. Analyse le SENS de chaque commentaire. Un commentaire exprimant un mauvais etat,
+   une plainte, un defaut ou une anomalie compte comme problematique meme sans mot-cle exact.
+5. Retourne UNIQUEMENT un OBJET JSON valide (pas un tableau) (sans markdown, sans backticks).
+
+Commentaires :
+${commentLines}
+
+Format : {"state":"Normal"|"Attention"|"Anormal","risk":<0-100>,"issues":<nb>,"total":<nb>,"reason":"<texte>","alerts":["<a1>","<a2>"]}`;
+
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+      'HTTP-Referer': 'https://serverroom-app.local',
+      'X-Title': 'ServerRoom Risk Analysis',
+    },
+    body: JSON.stringify({
+      model: OPENROUTER_MODEL,
+      max_tokens: 512,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+    signal: AbortSignal.timeout(15000),
+  });
+
+  if (!res.ok) throw new Error(`OpenRouter ${res.status}: ${await res.text()}`);
+
+  const data   = await res.json();
+  const raw    = data.choices?.[0]?.message?.content || '';
+
+  // Nettoyage robuste du JSON (objet ou tableau)
+  let cleanJson = raw.replace(/```json|```/g, '').trim();
+  const jsonMatch = cleanJson.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+  if (jsonMatch) cleanJson = jsonMatch[0];
+
+  let parsed;
+  try {
+    parsed = JSON.parse(cleanJson);
+    if (Array.isArray(parsed)) parsed = parsed[0] || null;
+  } catch (parseErr) {
+    console.warn('[AI] OpenRouter JSON parse error:', parseErr.message, 'Raw:', raw.slice(0, 200));
+    return null;
+  }
+
+  return { ...parsed, predictedRisk: Math.min(100, (parsed.risk || 0) + 8), provider: 'openrouter' };
+}
 
 // =========================
 // IA — Groq (fallback)
@@ -221,10 +309,18 @@ Format : {"state":"Normal"|"Attention"|"Anormal","risk":<0-100>,"issues":<nb>,"t
 }
 
 // =========================
-// Orchestrateur IA : Groq -> local
+// Orchestrateur IA : OpenRouter -> Groq -> local
 // Post-validation du state retourne par l IA
 // =========================
 async function analyzeWithAI(verifications, roomContext) {
+  try {
+    const r = await analyzeWithOpenRouter(verifications, roomContext);
+    if (r && r.risk !== undefined) {
+      r.state = enforceStateFromRisk(r.risk, r.state);
+      return r;
+    }
+  } catch (e) { console.warn('[AI] OpenRouter failed:', e.message); }
+
   try {
     const r = await analyzeWithGroq(verifications, roomContext);
     if (r && r.risk !== undefined) {
@@ -264,8 +360,10 @@ router.post('/room-risk', requireAuth, async (req, res) => {
         alerts:        ai.alerts  || [],
         trend:         trend.trend,
         maintenance:   maintenanceDecision(ai.risk, ai.state),
-        note:          'Analyse IA via Groq',
-        source:        'groq',
+        note:          ai.provider === 'openrouter'
+                         ? 'Analyse IA via OpenRouter'
+                         : 'Analyse IA via Groq',
+        source:        ai.provider,
       });
     }
 
@@ -299,8 +397,6 @@ router.post('/room-risk-predict', requireAuth, async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
-
-
 
 // =========================
 // ROUTE : Enregistrer une decision admin

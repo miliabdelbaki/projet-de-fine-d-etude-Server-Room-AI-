@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const String baseUrl = "https://back-api-ht8w.onrender.com/api";
+  static const String baseUrl = "https://projet-de-fine-d-etude-server-room-ai.onrender.com/api";
   static const Duration requestTimeout = Duration(seconds: 60);
 
   // ================= TOKEN =================
@@ -14,7 +14,7 @@ class ApiService {
       if (token == null) return null;
 
       final response = await http.get(
-        Uri.parse("$baseUrl/auth/profile"),
+        Uri.parse("$baseUrl/auth/me"),
         headers: {
           "Authorization": "Bearer $token",
         },

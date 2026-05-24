@@ -37,7 +37,13 @@ export default function HistoryPage() {
     let f = [...verifications];
     if (filters.search) {
       const s = filters.search.toLowerCase();
-      f = f.filter(v => v.room?.name?.toLowerCase().includes(s) || v.technician?.email?.toLowerCase().includes(s));
+      f = f.filter(v =>
+        v.room?.name?.toLowerCase().includes(s)
+        || v.employee?.displayName?.toLowerCase().includes(s)
+        || v.employee?.email?.toLowerCase().includes(s)
+        || v.technician?.displayName?.toLowerCase().includes(s)
+        || v.technician?.email?.toLowerCase().includes(s)
+      );
     }
     if (filters.startDate) f = f.filter(v => new Date(v.verifiedAt || v.createdAt) >= new Date(filters.startDate));
     if (filters.endDate) f = f.filter(v => new Date(v.verifiedAt || v.createdAt) <= new Date(filters.endDate));
@@ -63,7 +69,7 @@ export default function HistoryPage() {
         <div className="ind-filter-bar">
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={4}>
-              <TextField fullWidth size="small" label="Rechercher salle / technicien"
+              <TextField fullWidth size="small" label="Rechercher salle / employé"
                 value={filters.search} onChange={e => setFilters({ ...filters, search: e.target.value })} />
             </Grid>
             <Grid item xs={12} md={4}>
@@ -86,7 +92,7 @@ export default function HistoryPage() {
                 <TableRow>
                   <TableCell>Salle</TableCell>
                   <TableCell>Protocole</TableCell>
-                  <TableCell>Opérateur</TableCell>
+                  <TableCell>Employé</TableCell>
                   <TableCell>Date</TableCell>
                   <TableCell>Complétude</TableCell>
                   <TableCell align="right">Détail</TableCell>
@@ -102,7 +108,7 @@ export default function HistoryPage() {
                     </TableCell>
                     <TableCell sx={{ color: '#5a6a7a', fontSize: 12 }}>{v.checklist?.name || '—'}</TableCell>
                     <TableCell sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, color: '#8a9aaa' }}>
-                      {v.technician?.displayName || v.technician?.email || '—'}
+                      {v.employee?.displayName || v.employee?.email || v.technician?.displayName || v.technician?.email || '—'}
                     </TableCell>
                     <TableCell sx={{ fontFamily: 'Share Tech Mono', fontSize: 11, color: '#3a4a5a' }}>
                       {new Date(v.verifiedAt || v.createdAt).toLocaleDateString('fr-FR')}
@@ -137,7 +143,7 @@ export default function HistoryPage() {
                   {[
                     { key: 'Salle', val: detailDialog.verification.room?.name || '—' },
                     { key: 'Protocole', val: detailDialog.verification.checklist?.name || '—' },
-                    { key: 'Opérateur', val: detailDialog.verification.technician?.displayName || detailDialog.verification.technician?.email || '—' },
+                    { key: 'Opérateur', val: detailDialog.verification.employee?.displayName || detailDialog.verification.employee?.email || detailDialog.verification.technician?.displayName || detailDialog.verification.technician?.email || '—' },
                     { key: 'Date', val: new Date(detailDialog.verification.verifiedAt || detailDialog.verification.createdAt).toLocaleString('fr-FR') },
                   ].map(r => (
                     <Grid item xs={6} key={r.key}>

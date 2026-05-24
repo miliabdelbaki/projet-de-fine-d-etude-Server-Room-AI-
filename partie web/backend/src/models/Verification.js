@@ -11,7 +11,7 @@ const verificationItemSchema = new mongoose.Schema({
   completedAt: { type: Date },
   photo: { type: String },
   notes: { type: String },   
-  comment: { type: String }, 
+  comment: { type: String },
 });
 
 const verificationSchema = new mongoose.Schema(

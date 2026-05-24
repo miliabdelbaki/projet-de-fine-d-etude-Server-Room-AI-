@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
-    final role = user["user"]?["role"];
+    final role = user["role"];
 
     print("ROLE: $role"); // DEBUG
 

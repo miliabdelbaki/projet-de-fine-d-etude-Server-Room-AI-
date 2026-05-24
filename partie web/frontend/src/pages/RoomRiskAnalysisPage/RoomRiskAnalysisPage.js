@@ -63,7 +63,7 @@ function extractComments(verifications = []) {
   const result = [];
   for (const v of verifications) {
     const date = new Date(v.submittedAt || v.createdAt).toLocaleDateString('fr-FR');
-    const tech = v.technician?.displayName || v.technician?.email || 'Inconnu';
+    const tech = v.employee?.displayName || v.employee?.email || 'Inconnu';
     const topNote = (v.notes || v.comment || '').trim();
     if (topNote) result.push({ date, tech, label: 'Note globale', text: topNote, completed: true, verif: v });
     for (const item of (v.items || [])) {
@@ -492,7 +492,7 @@ export default function RoomRiskAnalysisPage() {
                         <>
                           <span className="rra-comment-label">{c.label}</span><br />
                           <span className="rra-comment-text">{c.text}</span><br />
-                          <span className="rra-comment-author">Technicien: {c.tech}</span>
+                          <span className="rra-comment-author">Employé: {c.tech}</span>
                         </>
                       }
                     />
@@ -518,7 +518,7 @@ export default function RoomRiskAnalysisPage() {
                 <span className="rra-detail-value">{selectedComment.label}</span>
               </div>
               <div className="rra-detail-row">
-                <span className="rra-detail-label">Technicien</span>
+                <span className="rra-detail-label">Employé</span>
                 <span className="rra-detail-value">{selectedComment.tech}</span>
               </div>
               <div className="rra-detail-row">
